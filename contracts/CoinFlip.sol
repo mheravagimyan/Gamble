@@ -50,6 +50,7 @@ contract CoinFlip is Ownable {
     }
 
     function changeCoeff(uint256 _coeff) external onlyOwner {
+        require(_coeff > 100, "CoinFlip: wrong coeff");
         coeff = _coeff;
     }
 
@@ -86,7 +87,7 @@ contract CoinFlip is Ownable {
             0, 
             Status.PENDING
         );
-        uint256 result = block.timestamp % 2; // 0 || 1
+        uint256 result = block.number % 2; // 0 || 1
         if(result == choice) {
             game.result = result;
             game.status = Status.WIN;
