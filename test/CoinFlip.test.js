@@ -197,7 +197,7 @@ describe("Lock", function () {
     });
 
     describe("Withdraw", function () {
-        it("test for withdraw", async function () {
+        it("Test for withdraw", async function () {
             const { game, token, owner, caller, otherAccount } = await loadFixture(deployCoinFlipFixture);
             await token.mint(game.address, 300)
 
@@ -206,7 +206,7 @@ describe("Lock", function () {
         });
     });
     describe("Withdraw require", function () {
-        it("test for withdraw require", async function () {
+        it("Should revert with message \"Not enough funds\"", async function () {
             const { game, token, owner, caller, otherAccount } = await loadFixture(deployCoinFlipFixture);
             await expect(game.connect(owner).withdraw(100))
                 .to.be.revertedWith("Not enough funds");
