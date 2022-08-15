@@ -114,9 +114,10 @@ contract CoinFlip is Ownable {
         );
     }
 
+
     function withdraw(uint256 _amount) external onlyOwner {
         require(token.balanceOf(address(this)) >= _amount, "Not enough funds");
-        payable(msg.sender).transfer(_amount);  
+        token.transfer(msg.sender, _amount);
     }
 
     function mint(uint256 _amount) public {
