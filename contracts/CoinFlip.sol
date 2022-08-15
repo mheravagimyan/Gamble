@@ -75,6 +75,8 @@ contract CoinFlip is Ownable {
         uint256 depAmount,
         uint256 choice
     ) external {
+        require(choice == 0 || choice == 1, "Not correct choice");
+        require(depAmount >= minDepositAmount && depAmount <= maxDepositAmount, "Deposit amount in out of range");
         require(token.balanceOf(msg.sender) >= depAmount, "Not enough funds");
         require(token.allowance(msg.sender, address(this)) >= depAmount, "Not enough allowance");
         token.transferFrom(msg.sender, address(this), depAmount);

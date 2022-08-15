@@ -172,6 +172,18 @@ describe("Lock", function () {
     });
 
     describe("Play function requires", function () {
+        it("Should revert with message \"Not correct choice\"", async function () {
+            const { game, token, owner, caller, otherAccount } = await loadFixture(deployCoinFlipFixture);
+            await expect(game.connect(caller).play(100, 2))
+                .to.be.revertedWith("Not correct choice");
+        });
+
+        it("Should revert with message \"Deposit amount in out of range\"", async function () {
+            const { game, token, owner, caller, otherAccount } = await loadFixture(deployCoinFlipFixture);
+            await expect(game.connect(caller).play(ethers.BigNumber.from("1000000000000000000000000000000000"), 1))
+                .to.be.revertedWith("Deposit amount in out of range");
+        });
+
         it("Should revert with message \"Not enough funds\"", async function () {
             const { game, token, owner, caller, otherAccount } = await loadFixture(deployCoinFlipFixture);
             await expect(game.connect(caller).play(100, 1))
