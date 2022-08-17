@@ -75,8 +75,8 @@ describe("Lock", function () {
         it("Should create game win game with correct args: ", async function () {
             const { game, token, owner, caller, otherAccount } = await loadFixture(deployCoinFlipFixture);
             await mine(1);
-
-            const choice = ethers.BigNumber.from("1");
+            await game.transferOwnership(owner.address);
+            const choice = 1;
             const depAmount = ethers.BigNumber.from("1000");
             const contractMintAmount = ethers.BigNumber.from("10000000000000000000000000000000000");
             const callerMintAmount = ethers.BigNumber.from("1000");
@@ -85,20 +85,19 @@ describe("Lock", function () {
             await token.mint(caller.address, callerMintAmount);
             await token.connect(caller).approve(game.address, ethers.BigNumber.from("1000"));
 
-            console.log(`Block number is: ${await ethers.provider.getBlockNumber()}`);
 
             await game.connect(caller).play(depAmount, choice);
-
+            const wGame = await game.games(0);
+            await game.connect(owner).confirm(wGame);
             const winGame = await game.games(0);
+            
             const prize = 1000 * 195 / 100;
             expect(winGame.player).to.equal(caller.address);
             expect(winGame.depositAmount).to.equal(1000);
             expect(winGame.choice).to.equal(1);
             expect(winGame.result).to.equal(1);
             expect(winGame.prize).to.equal(prize);
-            expect(winGame.status).to.equal(1)
-
-            // console.log(`Game is: ${winGame}`)
+            expect(winGame.status).to.equal(1);
 
         });
 
@@ -107,7 +106,7 @@ describe("Lock", function () {
             const { game, token, owner, caller, otherAccount } = await loadFixture(deployCoinFlipFixture);
             await mine(1);
 
-            const choice = ethers.BigNumber.from("0");
+            const choice = 1;
             const depAmount = ethers.BigNumber.from("1000");
             const contractMintAmount = ethers.BigNumber.from("10000000000000000000000000000000000");
             const callerMintAmount = ethers.BigNumber.from("1000");
@@ -119,36 +118,36 @@ describe("Lock", function () {
             console.log(`Block number is: ${await ethers.provider.getBlockNumber()}`);
 
             await game.connect(caller).play(depAmount, choice);
-
+            const lGame = await game.games(0);
+            await game.connect(owner).confirm(lGame);
             const loseGame = await game.games(0);
-            // const prize = 1000 * 195 / 100;
 
 
             expect(loseGame.player).to.equal(caller.address);
             expect(loseGame.depositAmount).to.equal(1000);
-            expect(loseGame.choice).to.equal(0);
-            expect(loseGame.result).to.equal(1);
+            expect(loseGame.choice).to.equal(1);
+            expect(loseGame.result).to.equal(0);
             expect(loseGame.prize).to.equal(0);
             expect(loseGame.status).to.equal(2);
-            // console.log(`Block number is: ${await ethers.provider.getBlockNumber()}`);
-
-
         });
 
         it("Shuld transfer correct amount when player win", async function () {
             const { game, token, owner, caller, otherAccount } = await loadFixture(deployCoinFlipFixture);
             const depAmount = ethers.BigNumber.from("1000");
-            const contractMintAmount = ethers.BigNumber.from("1000000000000000000000000000000000");
+            const contractMintAmount = ethers.BigNumber.from("10000");
             const callerMintAmount = ethers.BigNumber.from("1000");
 
             await token.mint(game.address, contractMintAmount);
             await token.mint(caller.address, callerMintAmount);
             await token.connect(caller).approve(game.address, depAmount);
 
-            // await game.connect(caller).play(depAmount, 1);
+            await game.connect(caller).play(depAmount, 1);
+            const wGame = await game.games(0);
 
-            await expect(() => game.connect(caller).play(depAmount, 0))
-                .to.changeTokenBalances(token, [game, caller], [-950, 950]);
+
+            
+            await expect(() => game.connect(owner).confirm(wGame))
+                .to.changeTokenBalances(token, [game, caller], [-1950, 1950]);
 
         });
 
@@ -162,9 +161,8 @@ describe("Lock", function () {
             await token.mint(caller.address, callerMintAmount);
             await token.connect(caller).approve(game.address, depAmount);
 
-            // await game.connect(caller).play(depAmount, 1);
 
-            await expect(() => game.connect(caller).play(depAmount, 1))
+            await expect(() => game.connect(caller).play(depAmount, 0))
                 .to.changeTokenBalances(token, [game, caller], [1000, -1000]);
 
 

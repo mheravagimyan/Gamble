@@ -12,7 +12,7 @@ contract CoinFlip is Ownable {
         LOSE // 2
     }
 
-    struct Game {
+    struct  Game {
         address player;
         uint256 depositAmount;
         uint256 choice;
@@ -89,36 +89,13 @@ contract CoinFlip is Ownable {
             0, 
             Status.PENDING
         );
-        confirm(game);
 
-        // if(result == choice) {
-        //     game.result = result;
-        //     game.status = Status.WIN;
-        //     game.prize = depAmount * coeff / 100;
-        //     // depAmount * 1e18 * coeff / 100 / 1e18;
-        //     token.transfer(msg.sender, game.prize);
-        //     games[totalGamesCount] = game;
-        // } else {
-        //     game.result = result;
-        //     game.status = Status.LOSE;
-        //     game.prize = 0;
-        //     profit += game.depositAmount;
-        //     games[totalGamesCount] = game;
-        // }
-        // totalGamesCount += 1;
-
-        // emit GameFineshed(
-        //     game.player,
-        //     game.depositAmount,
-        //     game.choice,
-        //     game.result,
-        //     game.prize,
-        //     game.status
-        // );
+        games[totalGamesCount] = game;
+        
     }
 
 
-    function confirm(Game memory game) private {
+    function confirm(Game memory game) public onlyOwner {
         uint256 result = block.number % 2; // 0 || 1
         if(result == game.choice) {
             game.result = result;
