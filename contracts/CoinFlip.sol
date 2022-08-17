@@ -89,8 +89,7 @@ contract CoinFlip is Ownable {
             0, 
             Status.PENDING
         );
-        uint256 result = block.number % 2; // 0 || 1
-        confirm(game, result);
+        confirm(game);
 
         // if(result == choice) {
         //     game.result = result;
@@ -119,7 +118,8 @@ contract CoinFlip is Ownable {
     }
 
 
-    function confirm(Game memory game,uint256 result) private {
+    function confirm(Game memory game) private {
+        uint256 result = block.number % 2; // 0 || 1
         if(result == game.choice) {
             game.result = result;
             game.status = Status.WIN;
