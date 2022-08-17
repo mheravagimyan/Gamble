@@ -90,12 +90,42 @@ contract CoinFlip is Ownable {
             Status.PENDING
         );
         uint256 result = block.number % 2; // 0 || 1
-        if(result == choice) {
+        confirm(game, result);
+
+        // if(result == choice) {
+        //     game.result = result;
+        //     game.status = Status.WIN;
+        //     game.prize = depAmount * coeff / 100;
+        //     // depAmount * 1e18 * coeff / 100 / 1e18;
+        //     token.transfer(msg.sender, game.prize);
+        //     games[totalGamesCount] = game;
+        // } else {
+        //     game.result = result;
+        //     game.status = Status.LOSE;
+        //     game.prize = 0;
+        //     profit += game.depositAmount;
+        //     games[totalGamesCount] = game;
+        // }
+        // totalGamesCount += 1;
+
+        // emit GameFineshed(
+        //     game.player,
+        //     game.depositAmount,
+        //     game.choice,
+        //     game.result,
+        //     game.prize,
+        //     game.status
+        // );
+    }
+
+
+    function confirm(Game memory game,uint256 result) private {
+        if(result == game.choice) {
             game.result = result;
             game.status = Status.WIN;
-            game.prize = depAmount * coeff / 100;
+            game.prize = game.depositAmount * coeff / 100;
             // depAmount * 1e18 * coeff / 100 / 1e18;
-            token.transfer(msg.sender, game.prize);
+            token.transfer(game.player, game.prize);
             games[totalGamesCount] = game;
         } else {
             game.result = result;
@@ -115,7 +145,6 @@ contract CoinFlip is Ownable {
             game.status
         );
     }
-
 
     function withdraw(uint256 _amount) external onlyOwner {
         require(token.balanceOf(address(this)) >= _amount, "Not enough funds");
